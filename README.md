@@ -2,7 +2,7 @@
 
 #### Table of Contents
 
-1. [Description](#description)
+1. [Overview](#description)
 1. [Setup - The basics of getting started with unity](#setup)
     * [What unity affects](#what-unity-affects)
     * [Setup requirements](#setup-requirements)
@@ -12,40 +12,24 @@
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development - Guide for contributing to the module](#development)
 
-## Description
+## Overview
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
+The `dellemc-unity` module manages DellEMC Unity storage resources.
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+The Unity storage system by DellEMC  delivers the ultimate in simplicity and value, enabling your organization to speed
+deployment, streamline management and seamlessly tier storage to the cloud. The `dellemc-unity` module allows you to
+configure and deploy the Unity via Puppet code.
+
 
 ## Setup
 
-### What unity affects **OPTIONAL**
+### Requirements
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
+* Puppet 4.7 or greater
+* Ruby 2.0 or greater
+* rubypython 0.6.3 or greater (The bridge between Ruby and Python)
+* Storops, 0.4.13 or greater (Python storage management library for VNX and Unity.) 
 
-If there's more that they should know about, though, this is the place to mention:
-
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
 
 ### Beginning with unity
 
@@ -61,23 +45,49 @@ examples and code samples for doing things with your module.
 
 ## Reference
 
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+
+* Define a managed Unity system
+
+```puppet
+unity_system { 'FNM00150600267':
+  ip       => '10.245.101.35',
+  user     => 'admin',
+  password => 'Password123!',
+  ensure => present,
+}
+```
+
+The defined system `Unity_system['FNM00150600267']` then can be passed to any Unity resources.
+
+* Create a pool
+
+```puppet
+unity_pool { 'puppet_pool':
+  unity_system => Unity_system['FNM00150600267'],
+  description => 'created by puppet module',
+  raid_groups => [{
+    disk_group => 'dg_15',
+    raid_type => 1,
+    stripe_width => 0,
+    disk_num => 5,
+  }],
+  ensure => present,
+}
+```
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
+TODO
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+Simply fork the repo [puppet-unity](https://github.com/emc-openstack/puppet-unity) and send PR for your code change(also provide testing result of your change), remember to give a title and description of your PR. 
 
-## Release Notes/Contributors/Etc. **Optional**
+## Contributors
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+peter.wang13 at emc.com
+
+
+## Release Notes
+
+0.1.0 - Initial release.

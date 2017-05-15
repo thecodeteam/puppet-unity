@@ -24,6 +24,6 @@ def get_raid_group_parameters(raid_groups)
   parameters
 end
 
-def get_unity_exception()
+def get_unity_exception
   RubyPython.import("storops.exception").UnityException
 end

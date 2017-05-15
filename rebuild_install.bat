@@ -1,5 +1,5 @@
 @echo off
-rem Reinstall the compiled puppet module
+rem Reinstall the latest puppet module on local
 
 cmd /c puppet module uninstall dellemc-unity
 cmd /c puppet module build

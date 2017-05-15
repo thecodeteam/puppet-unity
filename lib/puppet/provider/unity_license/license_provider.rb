@@ -20,10 +20,11 @@ Puppet::Type.type(:unity_license).provide(:license_provider) do
   @doc = 'Manage license upload.'
 
   def create
-    Puppet.info "[License]Beginning uploading Unity license file #{@resource[:licence_file]} for Unity #{@resource[:unity_system]}."
+    Puppet.info "[License]Beginning uploading Unity license file #{@resource[:license_file]} for Unity #{@resource[:unity_system]}."
+    res = resource.catalog.resource(resource[:unity_system].to_s)
 
-    @unity = get_unity_system(@resource[:unity_system])
-    @unity.upload_license(@resource[:license_file].path)
+    @unity = get_unity_system(res)
+    @unity.upload_license(@resource[:license_file].to_s)
   end
 
   def destroy
