@@ -19,11 +19,13 @@ def get_raid_group_parameters(raid_groups)
   parameters = []
   raid_groups.each do |raid_group|
     # disk_group = disk.UnityDiskGroup.new(raid_group[:disk_group])
-    disk_group = raid_group[:disk_group]
+    # Must use 'string' to access the hash instead of :symbol
+    # or NoIndexException will be raise
+    disk_group = raid_group['disk_group']
     param = pool.RaidGroupParameter.new(disk_group,
-                                        raid_group[:disk_num],
-                                        raid_group[:raid_type],
-                                        raid_group[:stripe_width])
+                                        raid_group['disk_num'],
+                                        raid_group['raid_type'],
+                                        raid_group["stripe_width"])
     parameters.push(param)
   end
   parameters

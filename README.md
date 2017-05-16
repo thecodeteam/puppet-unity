@@ -29,9 +29,17 @@ configure and deploy the Unity via Puppet code.
 * rubypython 0.6.3 or greater (The bridge between Ruby and Python)
 * Storops, 0.4.13 or greater (Python storage management library for VNX and Unity.) 
 
-[rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
+
+- [rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
 Python interpreters. It enables the interaction with Python based [storops](https://github.com/emc-openstack/storops)
-library, dramatically easing the effort to extend the `dellemc-unity` module from `storops`.
+library, dramatically eases the effort to extend the `dellemc-unity` module.
+
+- [storops](https://github.com/emc-openstack/storops) is a Python storage management library for
+VNX and Unity. It needs to be manually installed in Puppet agent/master.
+
+```bash
+pip install storops
+```
 
 ### Installation
 Before proceeding, Ensure you have installed the reqiured `Ruby` and `Puppet`.

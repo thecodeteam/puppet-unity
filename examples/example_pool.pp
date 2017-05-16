@@ -26,7 +26,7 @@ unity_pool { 'puppet_pool':
     stripe_width => 0,
     disk_num => 5,
   }],
-  ensure => present,
+  ensure => absent,
 }
 
 
