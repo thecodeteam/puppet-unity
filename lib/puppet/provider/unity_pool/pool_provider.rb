@@ -25,9 +25,7 @@ Puppet::Type.type(:unity_pool).provide(:pool_provider) do
 
     params = get_raid_group_parameters(@resource[:raid_groups])
     # Note: need the ! if we pass kwargs to the Python method
-    # sleep(10)
     unity.create_pool!(@resource[:name], params, @resource[:description])
-    # sleep(10)
   end
 
   def destroy

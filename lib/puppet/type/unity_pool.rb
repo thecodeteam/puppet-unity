@@ -23,9 +23,7 @@ Puppet::Type.newtype(:unity_pool) do
 
   end
 
-  # newparam(:unity_system) do
-  #   desc 'Unity system resource type.'
-  # end
+
   newparam(:description) do
     desc 'Storage pool description.'
     defaultto do
@@ -62,11 +60,11 @@ Puppet::Type.newtype(:unity_pool) do
 
   end
   newparam(:is_harvest_enabled) do
-    desc 'enable/disable pool harvesting.'
+    desc 'Enable/disable pool harvesting.'
 
   end
   newparam(:is_snap_harvest_enabled) do
-    desc 'enable/disable pool snapshot harvesting.'
+    desc 'Enable/disable pool snapshot harvesting.'
 
   end
   newparam(:pool_harvest_high_threshold) do
