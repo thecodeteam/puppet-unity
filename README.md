@@ -3,14 +3,13 @@
 #### Table of Contents
 
 1. [Overview](#description)
-1. [Setup - The basics of getting started with unity](#setup)
-    * [What unity affects](#what-unity-affects)
-    * [Setup requirements](#setup-requirements)
+1. [Setup](#setup)
+    * [Requirements](#setup-requirements)
     * [Beginning with unity](#beginning-with-unity)
-1. [Usage - Configuration options and additional functionality](#usage)
-1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Development - Guide for contributing to the module](#development)
+1. [Usage](#usage)
+1. [Reference](#reference)
+1. [Limitations](#limitations)
+1. [Development](#development)
 
 ## Overview
 
@@ -30,21 +29,22 @@ configure and deploy the Unity via Puppet code.
 * rubypython 0.6.3 or greater (The bridge between Ruby and Python)
 * Storops, 0.4.13 or greater (Python storage management library for VNX and Unity.) 
 
+[rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
+Python interpreters. It enables the interaction with Python based [storops](https://github.com/emc-openstack/storops)
+library, dramatically easing the effort to extend the `dellemc-unity` module from `storops`.
 
-### Beginning with unity
+### Installation
+Before proceeding, Ensure you have installed the reqiured `Ruby` and `Puppet`.
+1. Install `rubypython` via gem
+```bash
+gem install rubypython
+```
 
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
-
+2. Install `storops` from [pypi](https://pypi.python.org/pypi)
+```bash
+pip install storops
+```
 ## Usage
-
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
-
-## Reference
-
 
 * Define a managed Unity system
 
@@ -59,6 +59,16 @@ unity_system { 'FNM00150600267':
 
 The defined system `Unity_system['FNM00150600267']` then can be passed to any Unity resources.
 
+* Upload a license
+
+```puppet
+unity_license{ '/path/to/the/license.lic':
+  unity_system => Unity_system['FNM00150600267'],
+  ensure => present,
+}
+```
+
+Note: the path separator in the `title` must be `/` even using on Windows agent.
 * Create a pool
 
 ```puppet
@@ -75,6 +85,14 @@ unity_pool { 'puppet_pool':
 }
 ```
 
+## Reference
+
+### Types
+
+* `unity_system`: Define a Unity system.
+* `unity_license`: Upload a license to a defined Unity system.
+* `unity_pool`: Create, update, or destroy a storage pool.
+
 ## Limitations
 
 TODO
@@ -87,6 +105,9 @@ Simply fork the repo [puppet-unity](https://github.com/emc-openstack/puppet-unit
 
 peter.wang13 at emc.com
 
+## Contract
+
+peter.wang13 at emc.com
 
 ## Release Notes
 

@@ -21,11 +21,12 @@ Puppet::Type.type(:unity_pool).provide(:pool_provider) do
 
   def create
     Puppet.info "Creating pool #{@resource[:name]}."
-    res = resource.catalog.resource(resource[:unity_system].to_s)
-    @unity = get_unity_system(res)
+    unity = get_unity_system(resource[:unity_system])
 
     params = get_raid_group_parameters(@resource[:raid_groups])
-    @unity.create_pool(@resource[:name], params, resource[:description],
+    # Note: need the ! if we pass kwargs to the Python method
+    sleep(10)
+    unity.create_pool!(@resource[:name], params, @resource[:description],
                        alert_threshold: @resource[:alert_threshold],
                        is_harvest_enabled: @resource[:is_harvest_enabled],
                        is_snap_harvest_enabled: @resource[:is_snap_harvest_enabled],
@@ -36,18 +37,26 @@ Puppet::Type.type(:unity_pool).provide(:pool_provider) do
                        is_fast_cache_enabled: @resource[:is_fast_cache_enabled],
                        is_fastvp_enabled: @resource[:is_fastvp_enabled],
                        pool_type: @resource[:pool_type])
+    sleep(10)
   end
 
   def destroy
-    Puppet.warn "Unity system #{@resource[:name]} cannot be destroyed"
+    warning "Deleting pool #{@resource[:name]}."
+    unity = get_unity_system(@resource[:unity_system])
+    begin
+      pool = unity.get_pool(nil, @resource[:name])
+    rescue => e
+      Puppet.info("Pool #{@resource[:name]} is already deleted #{e.message}.")
+      pool = nil
+    end
+    pool.delete
   end
 
   def exists?
     Puppet.info "Checking existence of pool #{@resource[:name]} ."
-    res = resource.catalog.resource(resource[:unity_system].to_s)
-    @unity = get_unity_system(res)
+    unity = get_unity_system(resource[:unity_system])
     begin
-      pool = @unity.get_pool(nil, @resource[:name])
+      pool = unity.get_pool(nil, @resource[:name])
     rescue => e
       Puppet.info("Pool #{@resource[:name]} is not found: #{e.message}")
       pool = nil

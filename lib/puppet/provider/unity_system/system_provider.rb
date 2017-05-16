@@ -19,23 +19,6 @@ require 'puppet/util/dellemc/resource'
 Puppet::Type.type(:unity_system).provide(:system_provider) do
   @doc = 'Manage Unity system related information.'
 
-  # attr_reader :ip,  :user,  :password
-  #
-  # def ip
-  #   resource[:ip]
-  # end
-  # def user
-  #   resource[:user]
-  # end
-  # def password
-  #   resource[:password]
-  # end
-  # def cacertfile
-  #   resource[:cacertfile]
-  # end
-
-
-
   def create
     Puppet.info "[create]Connecting to Unity system #{@resource[:name]}."
     @unity = get_unity_system(@resource)
@@ -53,8 +36,11 @@ Puppet::Type.type(:unity_system).provide(:system_provider) do
       @unity = get_unity_system(@resource)
       existed = @unity.existed
     rescue => e
-      raise(Puppet::Error, "Unable to find unity system #{@resource[:name]}: #{e.message}")
+      warning "Unable to find unity system #{@resource[:name]}: #{e.message}"
+      existed = false
     end
     existed
   end
+
+
 end

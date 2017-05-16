@@ -28,6 +28,9 @@ Puppet::Type.newtype(:unity_pool) do
   # end
   newparam(:description) do
     desc 'Storage pool description.'
+    defaultto do
+      ''
+    end
   end
 
   newparam(:raid_groups) do
@@ -55,36 +58,46 @@ Puppet::Type.newtype(:unity_pool) do
   end
 
   newparam(:alert_threshold) do
-    desc 'Threshold at which the system will generate alerts about the free space in the pool,'
-    'specified as a percentage'
+    desc 'Threshold at which the system will generate alerts about the free space in the pool, specified as a percentage'
+
   end
   newparam(:is_harvest_enabled) do
     desc 'enable/disable pool harvesting.'
+
   end
   newparam(:is_snap_harvest_enabled) do
     desc 'enable/disable pool snapshot harvesting.'
+
   end
   newparam(:pool_harvest_high_threshold) do
     desc 'Pool used space high threshold at which the system will automatically starts to delete snapshots in the pool'
+
   end
   newparam(:pool_harvest_low_threshold) do
     desc 'Pool used space low threshold under which the system will automatically stop deletion of snapshots in the pool'
+
   end
   newparam(:snap_harvest_high_threshold) do
     desc 'Snapshot used space high threshold at which the system automatically starts to delete snapshots in the pool'
+
   end
   newparam(:snap_harvest_low_threshold) do
     desc 'Snapshot used space low threshold below which the system will stop automatically deleting snapshots in the pool'
+
   end
   newparam(:is_fast_cache_enabled) do
     desc 'Enable/disable FAST Cache for this pool'
+
   end
 
   newparam(:is_fastvp_enabled) do
     desc 'Enable/disable scheduled data relocations for this pool.'
+
   end
   newparam(:pool_type) do
     desc 'Create traditional/dynamic pool'
+    defaultto 1
+
   end
 
 end

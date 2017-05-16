@@ -14,22 +14,23 @@
 # under the License.
 
 class unity::pool (
-  $unity_system,
+  $system,
   $description,
   $raid_groups,
-  $alert_threshold = undef,
-  $is_harvest_enabled = undef,
-  $is_snap_harvest_enabled = undef,
+  $alert_threshold             = undef,
+  $is_harvest_enabled          = undef,
+  $is_snap_harvest_enabled     = undef,
   $pool_harvest_high_threshold = undef,
-  $pool_harvest_low_threshold = undef,
+  $pool_harvest_low_threshold  = undef,
   $snap_harvest_high_threshold = undef,
-  $snap_harvest_low_threshold = undef,
-  $is_fast_cache_enabled = undef,
-  $is_fastvp_enabled = undef,
-  $pool_type = undef,
+  $snap_harvest_low_threshold  = undef,
+  $is_fast_cache_enabled       = undef,
+  $is_fastvp_enabled           = undef,
+  $pool_type                   = undef,
+  $ensure,
 ) {
   unity_pool { $name:
-    unity_system                => $unity_system,
+    unity_system                => Unity_system[$system],
     description                 => $description,
     raid_groups                 => $raid_groups,
     alert_threshold             => $alert_threshold,
@@ -42,6 +43,7 @@ class unity::pool (
     is_fast_cache_enabled       => $is_fast_cache_enabled,
     is_fastvp_enabled           => $is_fastvp_enabled,
     pool_type                   => $pool_type,
+    ensure                      => $ensure,
   }
 
 }
