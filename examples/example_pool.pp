@@ -25,13 +25,11 @@ unity_pool { 'puppet_pool':
     raid_type    => 1,
     stripe_width => 0,
     disk_num     => 5,
-  }, {
-    disk_group   => 'dg_15',
-    raid_type    => 1,
-    stripe_width => 0,
-    disk_num     => 5,
   }],
-  ensure       => absent,
+  alert_threshold => 80,
+  is_snap_harvest_enabled => true,
+  is_harvest_enabled => true,
+  ensure       => present,
 }
 
 

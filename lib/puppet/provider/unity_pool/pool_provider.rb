@@ -25,7 +25,17 @@ Puppet::Type.type(:unity_pool).provide(:pool_provider) do
 
     params = get_raid_group_parameters(@resource[:raid_groups])
     # Note: need the ! if we pass kwargs to the Python method
-    unity.create_pool!(@resource[:name], params, @resource[:description])
+    unity.create_pool!(@resource[:name], params, @resource[:description],
+                       alert_threshold: @resource[:alert_threshold],
+                       is_harvest_enabled: @resource[:is_harvest_enabled],
+                       is_snap_harvest_enabled: @resource[:is_snap_harvest_enabled],
+                       pool_harvest_high_threshold: @resource[:pool_harvest_high_threshold],
+                       pool_harvest_low_threshold: @resource[:pool_harvest_low_threshold],
+                       snap_harvest_high_threshold: @resource[:snap_harvest_high_threshold],
+                       snap_harvest_low_threshold: @resource[:snap_harvest_low_threshold],
+                       is_fast_cache_enabled: @resource[:is_fast_cache_enabled],
+                       is_fastvp_enabled: @resource[:is_fastvp_enabled],
+                       pool_type: @resource[:pool_type])
   end
 
   def destroy

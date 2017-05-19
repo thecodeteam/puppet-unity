@@ -105,7 +105,7 @@ unity_pool { 'puppet_pool':
  * `unity_system`: Define a Unity system.
  * `unity_license`: Upload a license to a defined Unity system.
  * `unity_pool`: Create, update, or destroy a storage pool.
-
+ * `unity_iscsi_portal`: Create, update, or destroy a iSCSI portal. Applicable for both IPv4 and IPv6.
 
 
 ### Parameters
@@ -183,17 +183,20 @@ Required.
 a list of `Hash` is required for the pool.
 ```puppet
 ...
+unity_pool { 'puppet_pool':
+  unity_system => Unity_system['FNM00150600267'],
+  description  => 'created by puppet module',
   raid_groups  => [{
     disk_group   => 'dg_15',
     raid_type    => 1,
     stripe_width => 0,
     disk_num     => 5,
-  }, {
-    disk_group   => 'dg_16',
-    raid_type    => 1,
-    stripe_width => 0,
-    disk_num     => 5,
-  }]
+  }],
+  alert_threshold => 80,
+  is_snap_harvest_enabled => true,
+  is_harvest_enabled => true,
+  ensure       => present,
+}
 ...
 ```
 
@@ -289,6 +292,48 @@ Enable/disable scheduled data relocations for this pool.
 Optional
 
 Create traditional/dynamic pool
+
+
+#### Type: `unity_iscsi_portal`
+
+##### `ip`
+
+Required
+
+IP of the iSCSI portal
+
+##### `ethernet_port`
+
+Required
+
+The ethernet port ID for the iSCSI portal.
+
+such as `spa_eth2`, `spb_eth3`.
+
+##### `netmask`
+
+Required 
+
+The netmask for the iSCSI portal
+
+It can be a address `255.255.255.0` or a length `24`.
+
+##### `vlan`
+
+Required 
+The VLAN identifier for the iSCSI portal.
+##### `gateway`
+
+Optional
+
+The gateway for the network. the gateway must be reachable during creation.
+
+
+##### `v6_prefix_len`
+
+Optional
+
+IPv6 prefix length for the interface, if it uses an IPv6 address.
 
 ## Limitations
 
