@@ -14,7 +14,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-require 'puppet/util/dellemc/resource'
+require 'puppet/util/dellemc/unity_helper'
 
 Puppet::Type.type(:unity_pool).provide(:pool_provider) do
   @doc = 'Manage Unity system related information.'

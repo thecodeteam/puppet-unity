@@ -98,13 +98,27 @@ unity_pool { 'puppet_pool':
 }
 ```
 
+* Create a iSCSI portal on ethernet port
+
+```puppet
+unity_iscsi_portal { '10.244.213.245':
+  unity_system  => Unity_system['FNM00150600267'],
+  ethernet_port => 'spa_eth3',
+  netmask       => '255.255.255.0',
+  vlan          => 133,
+  gateway       => '10.244.213.1',
+  ensure        => present,
+}
+```
+
+
 ## Reference
 
 ### Types
 
  * `unity_system`: Define a Unity system.
  * `unity_license`: Upload a license to a defined Unity system.
- * `unity_pool`: Create, update, or destroy a storage pool.
+ * `unity_pool`: Create, destroy a storage pool.
  * `unity_iscsi_portal`: Create, update, or destroy a iSCSI portal. Applicable for both IPv4 and IPv6.
 
 
@@ -322,6 +336,7 @@ It can be a address `255.255.255.0` or a length `24`.
 
 Required 
 The VLAN identifier for the iSCSI portal.
+
 ##### `gateway`
 
 Optional

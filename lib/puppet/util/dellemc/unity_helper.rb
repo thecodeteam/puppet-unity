@@ -8,10 +8,15 @@ $storops = RubyPython.import('storops')
 $storops.enable_log
 
 def get_unity_system(unity_resource)
-  local_unity = resource.catalog.resource(unity_resource.to_s)
+  local_unity = @resource.catalog.resource(unity_resource.to_s)
   unity = $storops.UnitySystem.new(local_unity[:ip], local_unity[:user], local_unity[:password])
 end
 
+def get_unity_system_2(puppet_resource)
+  local_unity = puppet_resource.catalog.resource(puppet_resource[:unity_system].to_s)
+  unity = $storops.UnitySystem.new(local_unity[:ip], local_unity[:user], local_unity[:password])
+
+end
 
 def get_raid_group_parameters(raid_groups)
   pool = RubyPython.import('storops.unity.resource.pool')
@@ -29,4 +34,14 @@ def get_raid_group_parameters(raid_groups)
     parameters.push(param)
   end
   parameters
+end
+
+def none_to_nil(value)
+  if value == "None"
+    return nil
+  end
+  if value.respond_to?(:to_s)
+    return value.to_s
+  end
+  value
 end

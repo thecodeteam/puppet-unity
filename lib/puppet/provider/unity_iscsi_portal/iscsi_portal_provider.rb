@@ -14,113 +14,157 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-require 'puppet/util/dellemc/resource'
+require 'puppet/util/dellemc/unity_helper'
 
 Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
   @doc = 'Manage iSCSI portal on the Unity ethernet portal.'
+
   # Needed if there is any *newproperty* defined in type
   mk_resource_methods
 
-  def initialize *args
-    super
-    @current_property = {}
+  def initialize(*args)
+    super *args
+    # Define an instance variable that hold values to be synchronized.
+    @property_flush = {}
   end
 
   def create
+    Puppet.info "Creating portal"
+    portal_create
     @property_hash[:ensure] = :present
   end
 
   def destroy
+    Puppet.info "Destroying portal"
+    portal_destroy
     @property_hash[:ensure] = :absent
   end
 
 
   def exists?
     Puppet.info "Checking existence of iSCSI portal #{@resource[:ip]} ."
-    unity = get_unity_system(resource[:unity_system])
-    begin
-      portal = unity.get_iscsi_portal!(
-          _id: nil,
-          ip_address: @resource[:ip],
-          ethernet_port: @resource[:ethernet_port])
-    rescue => e
-      Puppet.info("iSCSI portal #{@resource[:ip]} is not found: #{e.message}")
-      @current_property = {}
-      return false
+    if portal_get == nil
+      false
+    else
+      true
+    end
+  end
+
+  def flush
+    Puppet.info 'Flushing portal info.'
+    set_portal
+
+    # @property_hash = portal_property
+  end
+
+  def set_portal
+    return if @property_hash[:ensure] == :absent
+
+    @property_hash = portal_property
+    Puppet.info "hash #{@property_hash}"
+    Puppet.info "resource #{@resource[:ethernet_port]}"
+    # We need to recreate the portal if its underlying ethernet_port get changed
+    if @property_hash[:ethernet_port] != @resource[:ethernet_port]
+      portal_destroy
+      portal_create
+      return
+    else
+      diff = {}
+      @property_hash.each do |key, value|
+        if key == :ensure
+          next
+        end
+        if key == :ethernet_port
+          next
+        end
+        if value != @resource[key]
+          if @resource[key].nil?
+            next
+          end
+          diff[key] = @resource[key]
+        end
+      end
     end
 
-    if portal.__len__ == 0
-      @current_property = {}
-      return false
+    if diff.empty?
+      Puppet.info "NO any change on portal #{@resource[:ip]}"
+    else
+      portal_modify(diff)
     end
-    # the first item is the object.
-    portal = portal[0]
-    @current_property[:ip] = portal.ip_address
-    @current_property[:netmask] = portal.netmask
-    @current_property[:v6_prefix_len] = portal.v6_prefix_length
-    @current_property[:gateway] = portal.gateway
-    @current_property[:vlan] = portal.vlan_id
-    @current_property[:ethernet_port] = portal.ethernet_port.get_id
-    @current_property[:ensure] = :present
-    true
   end
+
+  # @property_hash = portal_property
+
+
+  def portal_property
+    unity = get_unity_system(@resource[:unity_system])
+    portal = unity.get_iscsi_portal!(
+      _id: nil,
+      ip_address: @resource[:ip])
+    if portal.__len__ == 0
+      return {:ensure => :absent}
+    else
+      # the first item is the object.
+      portal0 = portal[0]
+      convert_portal(portal0)
+    end
+  end
+
 
   def portal_create
     unity = get_unity_system(resource[:unity_system])
 
     Puppet.info "Creating iSCSI portal #{@resource[:ip]}."
     portal = unity.create_iscsi_portal!(
-        ethernet_port: @resource[:ethernet_port],
-        ip: @resource[:ip], netmask: @resource[:netmask],
-        v6_prefix_len: @resource[:v6_prefix_len],
-        vlan: @resource[:vlan],
-        gateway: @resource[:gateway])
+      ethernet_port: @resource[:ethernet_port],
+      ip: @resource[:ip], netmask: @resource[:netmask],
+      v6_prefix_len: @resource[:v6_prefix_len],
+      vlan: @resource[:vlan],
+      gateway: @resource[:gateway])
     Puppet.info "Created iSCSI portal #{@resource[:ip]}."
     @property_hash[:ensure] = :present
   end
 
-  def portal_modify(ip, netmask, v6_prefix_len, vlan, gateway)
-    unity = get_unity_system(resource[:unity_system])
-    Puppet.info "Modifying: #{ip}, #{netmask}, #{v6_prefix_len}, #{vlan}, #{gateway}"
-    portal = unity.get_iscsi_portal!(ip: ip)
-    portal.modify(ip: ip, netmask: netmask, v6_prefix_len: v6_prefix_len,
-                  vlan: vlan, gateway: gateway)
+  def portal_modify(diff)
+    Puppet.info "Modifying: #{@resource}"
+    portal = portal_get
+    # No way to update the ip on created portal.
+    portal.modify!(diff)
   end
 
-  def portal_destroy(ip)
-    unity = get_unity_system(resource[:unity_system])
-
+  def portal_destroy
     Puppet.info "Deleting iSCSI portal #{@resource[:ip]}"
-    portal = unity.get_iscsi_portal!(ip: ip)
+    portal = portal_get
     portal.delete
     @property_hash[:ensure] = :absent
   end
 
 
-  def flush
-    Puppet.info 'Flushing portal info.'
-    case @property_hash[:ensure]
-      when :present
-        curr_port = @current_property[:ethernet_port]
-        # Need to destroy the interface on current ethernet port and recreate
-        # on new ethernet port.
-        Puppet.info "#{@property_hash[:ethernet_port]} == #{curr_port}"
-        if @property_hash[:ethernet_port] != curr_port
-          Puppet.info "Destroying iSCSI portal #{@resource[:ip]} on #{curr_port}"
-          portal_destroy(@resource[:ip])
-          Puppet.info "Recreating iSCSI portal #{@resource[:ip]} on #{@property_hash[:ethernet_port]}"
-          portal_create
-        else
-          # Modify the current iSCSI Portal
-          portal_modify(
-              @resource[:ip], @resource[:netmask],
-              @resource[:v6_prefix_len], @resource[:vlan],
-              @resource[:gateway])
-        end
-      when :absent
-        portal_destroy(@resource[:ip])
-
+  def portal_get
+    unity = get_unity_system(@resource[:unity_system])
+    Puppet.info "Getting iSCSI portal #{@resource[:ip]}"
+    portal = unity.get_iscsi_portal!(
+      _id: nil,
+      ip_address: @resource[:ip])
+    if portal.__len__ == 0
+      nil
+    else
+      # the first item is the object.
+      portal = portal[0]
+      portal
     end
+  end
+
+  def convert_portal(portal)
+    current_property = {}
+    current_property[:ip] = none_to_nil(portal.ip_address)
+    current_property[:netmask] = none_to_nil(portal.netmask)
+    current_property[:v6_prefix_len] = none_to_nil(portal.v6_prefix_length)
+    current_property[:gateway] = none_to_nil(portal.gateway)
+    current_property[:vlan] = none_to_nil(portal.vlan_id)
+    current_property[:ethernet_port] = none_to_nil(portal.ethernet_port.get_id)
+    current_property[:ensure] = :present
+    current_property
   end
 
 end
