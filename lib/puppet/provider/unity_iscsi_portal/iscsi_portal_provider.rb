@@ -18,8 +18,11 @@ require 'puppet/util/dellemc/resource'
 
 Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
   @doc = 'Manage iSCSI portal on the Unity ethernet portal.'
+  # Needed if there is any *newproperty* defined in type
+  mk_resource_methods
 
   def initialize *args
+    super
     @current_property = {}
   end
 
@@ -76,19 +79,19 @@ Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
     @property_hash[:ensure] = :present
   end
 
-
   def portal_modify(ip, netmask, v6_prefix_len, vlan, gateway)
-
+    unity = get_unity_system(resource[:unity_system])
     Puppet.info "Modifying: #{ip}, #{netmask}, #{v6_prefix_len}, #{vlan}, #{gateway}"
+    portal = unity.get_iscsi_portal!(ip: ip)
+    portal.modify(ip: ip, netmask: netmask, v6_prefix_len: v6_prefix_len,
+                  vlan: vlan, gateway: gateway)
   end
 
-
-  def portal_destroy
+  def portal_destroy(ip)
     unity = get_unity_system(resource[:unity_system])
 
     Puppet.info "Deleting iSCSI portal #{@resource[:ip]}"
-    portal = unity.get_iscsi_portal!(ethernet_port: @resource[:ethernet_port],
-                                     ip: @resource[:ip])
+    portal = unity.get_iscsi_portal!(ip: ip)
     portal.delete
     @property_hash[:ensure] = :absent
   end
@@ -98,13 +101,24 @@ Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
     Puppet.info 'Flushing portal info.'
     case @property_hash[:ensure]
       when :present
-        # Modify the current iSCSI Portal
-        portal_modify(
-            @resource[:ip], @resource[:netmask],
-            @resource[:v6_prefix_len], @resource[:vlan],
-            @resource[:gateway])
+        curr_port = @current_property[:ethernet_port]
+        # Need to destroy the interface on current ethernet port and recreate
+        # on new ethernet port.
+        Puppet.info "#{@property_hash[:ethernet_port]} == #{curr_port}"
+        if @property_hash[:ethernet_port] != curr_port
+          Puppet.info "Destroying iSCSI portal #{@resource[:ip]} on #{curr_port}"
+          portal_destroy(@resource[:ip])
+          Puppet.info "Recreating iSCSI portal #{@resource[:ip]} on #{@property_hash[:ethernet_port]}"
+          portal_create
+        else
+          # Modify the current iSCSI Portal
+          portal_modify(
+              @resource[:ip], @resource[:netmask],
+              @resource[:v6_prefix_len], @resource[:vlan],
+              @resource[:gateway])
+        end
       when :absent
-        portal_destroy
+        portal_destroy(@resource[:ip])
 
     end
   end

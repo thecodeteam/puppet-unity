@@ -23,7 +23,7 @@ Puppet::Type.newtype(:unity_iscsi_portal) do
     desc 'ip address for the iSCSI portal.'
   end
 
-  newparam(:ethernet_port) do
+  newproperty(:ethernet_port) do
     desc 'Ethernet port for creating the iSCSI portal.'
   end
 
