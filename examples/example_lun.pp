@@ -7,7 +7,7 @@ notice("License")
 
 
 unity_lun { 'puppet_lun':
-  unity_system => Unity_system['FNM00150600267']
+  unity_system => Unity_system['FNM00150600267'],
   size => 10,
   thin => true,
   compression => true,

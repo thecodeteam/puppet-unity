@@ -61,8 +61,6 @@ Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
     return if @property_hash[:ensure] == :absent
 
     @property_hash = portal_property
-    Puppet.info "hash #{@property_hash}"
-    Puppet.info "resource #{@resource[:ethernet_port]}"
     # We need to recreate the portal if its underlying ethernet_port get changed
     if @property_hash[:ethernet_port] != @resource[:ethernet_port]
       portal_destroy

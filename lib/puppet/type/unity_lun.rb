@@ -40,7 +40,7 @@ Puppet::Type.newtype(:unity_lun) do
   end
 
   newparam(:thin) do
-    desc 'Enable/disable thin provisiontioning.'
+    desc 'Enable/disable thin provisioning.'
 
     defaultto true
     newvalues(true, false)
