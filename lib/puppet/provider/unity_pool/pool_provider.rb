@@ -54,7 +54,7 @@ Puppet::Type.type(:unity_pool).provide(:pool_provider) do
     Puppet.info "Checking existence of pool #{@resource[:name]} ."
     unity = get_unity_system(resource[:unity_system])
     begin
-      pool = unity.get_pool(nil, @resource[:name])
+      pool = unity.get_pool!(name: @resource[:name])
     rescue => e
       Puppet.info("Pool #{@resource[:name]} is not found: #{e.message}")
       pool = nil

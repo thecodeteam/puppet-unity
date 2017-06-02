@@ -129,9 +129,22 @@ Puppet::Type.type(:unity_host).provide(:host_provider) do
     current_property[:host_type] = host.type.value[0]
     current_property[:description] = host.description
     current_property[:os] = host.os_type
-    current_property[:ip] = host.host_ip_ports[0].address if host.host_ip_ports != nil
-    current_property[:iqn] = host.iscsi_host_initiators[0].initiator_id if host.iscsi_host_initiators != nil
-    current_property[:wwns] = host.fc_host_initiators.initiator_id if host.fc_host_initiators != nil
+    if host.host_ip_ports == nil
+      current_property[:ip] = nil
+    else
+      current_property[:ip] = host.host_ip_ports[0].address
+    end
+    if host.iscsi_host_initiators == nil
+      current_property[:iqn] = nil
+    else
+      current_property[:iqn] = host.iscsi_host_initiators[0].initiator_id
+    end
+    if host.fc_host_initiators == nil
+      current_property[:wwns] = nil
+    else
+      current_property[:wwns] = host.fc_host_initiators.initiator_id
+
+    end
 
     current_property
   end

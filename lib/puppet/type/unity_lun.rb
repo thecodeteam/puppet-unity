@@ -29,6 +29,12 @@ Puppet::Type.newtype(:unity_lun) do
     end
   end
 
+  newparam(:thin) do
+    desc 'Enable/disable thin provisioning.'
+
+    defaultto true
+  end
+
   newproperty(:size) do
     desc 'set LUN size.'
     validate do |value|
@@ -39,32 +45,24 @@ Puppet::Type.newtype(:unity_lun) do
     end
   end
 
-  newparam(:thin) do
-    desc 'Enable/disable thin provisioning.'
+  newproperty(:host) do
+    desc 'Set hosts for accessing the LUN.'
+  end
 
-    defaultto true
-    newvalues(true, false)
+  newproperty(:pool) do
+    desc 'Set pool of the LUN.'
   end
 
   newproperty(:compression) do
-    desc 'Enable/disable LUN compression.'
+    desc 'Enable/disable LUN compression, only applicable for all-flash pool.'
 
-    defaultto true
-    newvalues(true, false)
   end
 
-  newproperty(:default_node) do
+  newproperty(:sp) do
     desc 'Storage Processor (SP) that owns the LUN.'
-
-    newvalues(0, 1, nil)
   end
 
-  newproperty(:host_access) do
-    desc 'Host access settings for the LUN, as defined by the blockHostAccess embedded resource type.'
-
-  end
-
-  newproperty(:io_limit) do
+  newproperty(:io_limit_policy) do
     desc 'IO limit settings for the LUN, as defined by the ioLimitParameters.'
   end
 

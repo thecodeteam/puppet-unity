@@ -27,7 +27,7 @@ Puppet::Type.newtype(:unity_pool) do
   newparam(:description) do
     desc 'Storage pool description.'
     defaultto do
-      ''
+      'Created by puppet.'
     end
   end
 

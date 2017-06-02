@@ -75,7 +75,7 @@ Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
         if key == :ethernet_port
           next
         end
-        if value != @resource[key]
+        unless value == @resource[key]
           if @resource[key].nil?
             next
           end
