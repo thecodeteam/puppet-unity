@@ -66,4 +66,8 @@ Puppet::Type.newtype(:unity_lun) do
     desc 'IO limit settings for the LUN, as defined by the ioLimitParameters.'
   end
 
+  newproperty(:hosts) do
+    desc 'Hosts which contains the LUN.'
+  end
+
 end

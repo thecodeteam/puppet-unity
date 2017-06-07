@@ -23,7 +23,7 @@ unity_pool { 'puppet_pool':
 unity_lun { 'puppet_lun':
   unity_system => Unity_system['FNM00150600267'],
   pool         => Unity_pool['puppet_pool'],
-  size         => 20,
+  size         => 15,
   thin         => true,
   compression  => false,
   sp           => 0,

@@ -65,10 +65,38 @@ Puppet::Type.type(:unity_host).provide(:host_provider) do
     if diff.empty?
       Puppet.info "No any change on host #{@resource[:name]}"
     else
-      Puppet.debug "The change for host is: #{diff}"
-      host_destroy
-      host_create
+      host = host_get
+
+      if diff.key? :luns
+        host.update_luns!(diff[:luns])
+        diff.delete(:luns)
+      end
+
+      if diff.key? :iqn or diff.key? :wwns
+        Puppet.info "Setting new initiators: #{diff[:iqn]}"
+        host.update_initiators!(iqns: [@resource[:iqn]], wwns: @resource[:wwns])
+        diff.delete(:iqn)
+        diff.delete(:wwns)
+      end
+
+      if diff.key? :ip
+        Puppet.info "Setting new ip: #{diff[:ip]}"
+        host.delete_ip_port!(@property_hash[:ip])
+        host.add_ip_port!(diff[:ip])
+        diff.delete(:ip)
+      end
+      # Modify os/description if needed.
+      if diff.key? :description
+        diff[:desc] = diff[:description]
+        diff.delete(:description)
+      end
+      host.modify!(diff)
     end
+    # else
+    #   Puppet.debug "The change for host is: #{diff}"
+    #   host_destroy
+    #   host_create
+    # end
 
   end
 
