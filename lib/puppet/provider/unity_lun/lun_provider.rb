@@ -56,13 +56,29 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
     Puppet.info 'Flushing LUN info.'
     return if @property_hash[:ensure] == :absent
 
-    @property_hash = lun_property
+    unity = get_unity_system(@resource[:unity_system])
+    lun = lun_get
+    @property_hash = lun_property lun
 
     Puppet.info "Lun info before flushing #{@property_hash}"
 
     diff = {}
     @property_hash.each do |key, value|
-      if key == :pool
+      if key == :pool || key == :thin
+        next
+      end
+      if key == :io_limit_policy
+        # compare policy name
+        if @resource[key].nil? && value.nil? != true
+          # user want to remove lun from the policy
+          policy = unity.get_io_limit_policy!(name: value)
+          remove_from_policy(policy, lun)
+        end
+        if @resource[key].nil? != true && value.nil?
+          # user want to add lun to the policy
+          policy = unity.get_io_limit_policy!(name: @resource[key][:name])
+          add_to_policy(policy, lun)
+        end
         next
       end
       if @resource[key].nil?
@@ -71,26 +87,21 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
       unless value == @resource[key]
         if key == :compression
           diff[:is_compression] = @resource[key]
-        elsif key == :host
+        elsif key == :hosts
           diff[:host_access] = @resource[key]
-        elsif key == :thin
-          next
         elsif key == :size
-          diff[:size] = 21474836480
-
+          # TODO need to resolve the long bug in rubypython
+          diff[:size] = @resource[key] * 1024 * 1024 * 1024
         else
           diff[key] = @resource[key]
         end
       end
-    end
 
-    if diff.empty?
-      Puppet.info "NO any change on LUN #{@resource[:name]}"
-    else
+    end # end_of_each
+
+    unless diff.empty?
       Puppet.info "Modifying the LUN with change #{diff}"
-      lun = lun_get
       lun.modify!(diff)
-
     end
   end
 
@@ -107,24 +118,28 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
     lun
   end
 
-  def lun_property
-
-    lun = lun_get
-
+  def lun_property lun
+    if lun.nil?
+      lun = lun_get
+    end
     curr = {}
 
     curr[:name] = lun.name
     curr[:description] = lun.description
     curr[:thin] = lun.is_thin_enabled
     curr[:size] = (lun.size_total / 1024 / 1024 / 1024)
-    curr[:host] = lun.host_access
+    # curr[:host] = lun.host_access
     curr[:pool] = lun.pool.name
     curr[:compression] = lun.is_compression_enabled
     curr[:sp] = lun.default_node.value[0]
-    curr[:io_limit_policy] = lun.io_limit_policy
-
+    if lun.io_limit_policy == nil
+      curr[:io_limit_policy] = nil
+    else
+      curr[:io_limit_policy] = lun.io_limit_policy.name
+    end
     curr
   end
+
 
   def lun_create
     Puppet.info "Creating lun #{@resource[:name]} with size #{@resource[:size]}."
@@ -139,7 +154,7 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
       host_access: @resource[:host],
       is_thin: @resource[:thin],
       description: @resource[:description],
-      io_limit_policy: @resource[:io_limit_policy],
+      # io_limit_policy: @resource[:io_limit_policy],
       is_compression: @resource[:compression],
     )
     Puppet.info "LUN created: #{lun.get_id}"
@@ -155,5 +170,20 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
     Puppet.info "LUN Destroyed: #{lun_id}."
   end
 
+  # Manage policy and lun relationship
+  def add_to_policy(policy, lun)
+    Puppet.info "Adding policy #{policy.name} to lun #{lun.name}"
+    policy.apply_to_storage(lun)
+  end
+
+  def remove_from_policy(policy, lun)
+    Puppet.info "Removing policy #{policy.name} from lun #{lun.name}"
+    policy.remove_from_storage(lun)
+  end
+
+  # Manage host and lun relationship
+  def update_hosts lun, hosts
+
+  end
 
 end

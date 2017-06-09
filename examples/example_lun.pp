@@ -20,13 +20,22 @@ unity_pool { 'puppet_pool':
 }
 
 
-unity_lun { 'puppet_lun':
+unity_io_limit_policy { 'puppet_policy':
   unity_system => Unity_system['FNM00150600267'],
-  pool         => Unity_pool['puppet_pool'],
-  size         => 15,
-  thin         => true,
-  compression  => false,
-  sp           => 0,
-  description  => "Created by puppet_unity.",
-  ensure       => present,
+  policy_type  => 1,
+  description  => 'Created by puppet',
+  max_iops     => 1000,
+  max_kbps     => 20480,
+}
+
+unity_lun { 'puppet_lun':
+  unity_system    => Unity_system['FNM00150600267'],
+  pool            => Unity_pool['puppet_pool'],
+  size            => 20,
+  thin            => true,
+  compression     => false,
+  sp              => 0,
+  description     => "Created by puppet_unity.",
+  io_limit_policy => Unity_io_limit_policy['puppet_policy'],
+  ensure          => present,
 }

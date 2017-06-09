@@ -55,9 +55,9 @@ Puppet::Type.type(:unity_host).provide(:host_provider) do
     @property_hash.each do |key, value|
       Puppet.info "Comparing #{value} and #{@resource[key]}"
       unless value == @resource[key]
-        if @resource[key].nil?
-          next
-        end
+        # if @resource[key].nil?
+        #   next
+        # end
         diff[key] = @resource[key]
       end
     end
@@ -92,6 +92,7 @@ Puppet::Type.type(:unity_host).provide(:host_provider) do
       end
       host.modify!(diff)
     end
+    # TODO need to add function in storops
     # else
     #   Puppet.debug "The change for host is: #{diff}"
     #   host_destroy
