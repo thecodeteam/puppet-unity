@@ -28,6 +28,31 @@ unity_io_limit_policy { 'puppet_policy':
   max_kbps     => 20480,
 }
 
+unity_host { 'my_host':
+  unity_system => Unity_system['FNM00150600267'],
+  description  => 'Created by puppet',
+  ip           => '192.168.1.139',
+  os           => 'Ubuntu16',
+  host_type    => 1,
+  # iqn          => 'iqn.1993-08.org.debian:01:unity-puppet-host',
+  # wwns         => ['20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D3',
+  #   '20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D4'],
+  ensure       => present,
+  # luns         => [Unity_lun['puppet_lun']],
+}
+
+
+unity_host { 'my_host2':
+  unity_system => Unity_system['FNM00150600267'],
+  description  => 'Created by puppet2',
+  ip           => '192.168.1.140',
+  os           => 'Ubuntu14',
+  host_type    => 1,
+  # iqn          => 'iqn.1993-08.org.debian:01:unity-puppet-host',
+  # wwns         => ['20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D3',
+  #   '20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D4'],
+  ensure       => present,
+}
 unity_lun { 'puppet_lun':
   unity_system    => Unity_system['FNM00150600267'],
   pool            => Unity_pool['puppet_pool'],
@@ -37,5 +62,6 @@ unity_lun { 'puppet_lun':
   sp              => 0,
   description     => "Created by puppet_unity.",
   io_limit_policy => Unity_io_limit_policy['puppet_policy'],
+  hosts           => [Unity_host['my_host'], Unity_host['my_host2']],
   ensure          => present,
 }

@@ -64,6 +64,7 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
 
     diff = {}
     @property_hash.each do |key, value|
+      # Thin/pool cannot be changed
       if key == :pool || key == :thin
         next
       end
@@ -81,14 +82,38 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
         end
         next
       end
+
+      if key == :hosts
+        # Compare hosts
+        new_names = []
+        unless @resource[key].nil?
+          # clear the hosts for the LUN
+          new_names = []
+          Puppet.info "key: #{@resource[key]}"
+
+          @resource[key].each do |host_res|
+            Puppet.info "Resource #{host_res}"
+            new_names << resource.catalog.resource(host_res.to_s)[:name]
+          end
+        end
+        new_names = new_names.to_set
+
+        curr_names = value.to_set
+        if curr_names == new_names
+          Puppet.debug "No change for the hosts of LUN #{lun.name}."
+        else
+          Puppet.info "Setting new hosts #{new_names.to_a} for LUN #{lun.name}."
+          lun.update_host!(host_names: new_names.to_a)
+        end
+
+      end
+
       if @resource[key].nil?
         next
       end
       unless value == @resource[key]
         if key == :compression
           diff[:is_compression] = @resource[key]
-        elsif key == :hosts
-          diff[:host_access] = @resource[key]
         elsif key == :size
           # TODO need to resolve the long bug in rubypython
           diff[:size] = @resource[key] * 1024 * 1024 * 1024
@@ -100,7 +125,7 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
     end # end_of_each
 
     unless diff.empty?
-      Puppet.info "Modifying the LUN with change #{diff}"
+      Puppet.info "Modifying the LUN properties with change #{diff}"
       lun.modify!(diff)
     end
   end
@@ -128,7 +153,7 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
     curr[:description] = lun.description
     curr[:thin] = lun.is_thin_enabled
     curr[:size] = (lun.size_total / 1024 / 1024 / 1024)
-    # curr[:host] = lun.host_access
+    curr[:hosts] = get_current_hosts(lun)
     curr[:pool] = lun.pool.name
     curr[:compression] = lun.is_compression_enabled
     curr[:sp] = lun.default_node.value[0]
@@ -151,7 +176,7 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
       lun_name: @resource[:name],
       size_gb: @resource[:size],
       sp: @resource[:sp],
-      host_access: @resource[:host],
+      # host_access: @resource[:host],
       is_thin: @resource[:thin],
       description: @resource[:description],
       # io_limit_policy: @resource[:io_limit_policy],
@@ -172,18 +197,38 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
 
   # Manage policy and lun relationship
   def add_to_policy(policy, lun)
-    Puppet.info "Adding policy #{policy.name} to lun #{lun.name}"
+    Puppet.info "Adding policy #{policy.name} to lun #{lun.name}."
     policy.apply_to_storage(lun)
   end
 
   def remove_from_policy(policy, lun)
-    Puppet.info "Removing policy #{policy.name} from lun #{lun.name}"
+    Puppet.info "Removing policy #{policy.name} from lun #{lun.name}."
     policy.remove_from_storage(lun)
   end
 
   # Manage host and lun relationship
-  def update_hosts lun, hosts
-
+  def update_hosts(lun, host_names)
+    Puppet.info "Updating hosts for lun #{lun.name}."
+    lun.update_hosts(host_names)
   end
+
+  def get_current_hosts(lun)
+    unity = get_unity_system(@resource[:unity_system])
+    host_names = []
+    unless lun.host_access == nil
+      host_ids = lun.host_access.get_host_id
+
+      host_ids.each do |host_id|
+        host = host_get_by_id unity, host_id
+        host_names << host.name
+      end
+    end
+    host_names
+  end
+
+  def host_get_by_id(unity, host_id)
+    unity.get_host!(_id: host_id)
+  end
+
 
 end

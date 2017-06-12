@@ -55,7 +55,4 @@ Puppet::Type.newtype(:unity_host) do
     desc 'WWNs for the host.'
   end
 
-  newproperty(:luns, :arrray_matching => :all) do
-    desc 'LUNs for the hosts.'
-  end
 end

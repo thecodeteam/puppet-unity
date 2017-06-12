@@ -45,10 +45,6 @@ Puppet::Type.newtype(:unity_lun) do
     end
   end
 
-  newproperty(:host) do
-    desc 'Set hosts for accessing the LUN.'
-  end
-
   newproperty(:pool) do
     desc 'Set pool of the LUN.'
   end
@@ -66,8 +62,8 @@ Puppet::Type.newtype(:unity_lun) do
     desc 'IO limit settings for the LUN, as defined by the ioLimitParameters.'
   end
 
-  newproperty(:hosts) do
-    desc 'Hosts which contains the LUN.'
+  newproperty(:hosts, :arrry_matching => :all) do
+    desc 'Hosts which contain this LUN.'
   end
 
 end

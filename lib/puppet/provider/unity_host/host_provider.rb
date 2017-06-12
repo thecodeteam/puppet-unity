@@ -66,12 +66,6 @@ Puppet::Type.type(:unity_host).provide(:host_provider) do
       Puppet.info "No any change on host #{@resource[:name]}"
     else
       host = host_get
-
-      if diff.key? :luns
-        host.update_luns!(diff[:luns])
-        diff.delete(:luns)
-      end
-
       if diff.key? :iqn or diff.key? :wwns
         Puppet.info "Setting new initiators: #{diff[:iqn]}"
         host.update_initiators!(iqns: [@resource[:iqn]], wwns: @resource[:wwns])
@@ -92,12 +86,6 @@ Puppet::Type.type(:unity_host).provide(:host_provider) do
       end
       host.modify!(diff)
     end
-    # TODO need to add function in storops
-    # else
-    #   Puppet.debug "The change for host is: #{diff}"
-    #   host_destroy
-    #   host_create
-    # end
 
   end
 

@@ -46,8 +46,4 @@ Puppet::Type.newtype(:unity_io_limit_policy) do
   newproperty(:max_kbps_density) do
     desc 'Read/write density-based KB/s limit.'
   end
-
-  newproperty(:luns,  :arrray_matching => :all) do
-    desc 'LUNs for applying this io policy'
-  end
 end
