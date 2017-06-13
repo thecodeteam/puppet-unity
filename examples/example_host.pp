@@ -20,9 +20,8 @@ unity_host { 'my_host':
   ip           => '192.168.1.139',
   os           => 'Ubuntu16',
   host_type    => 1,
-  # iqn          => 'iqn.1993-08.org.debian:01:unity-puppet-host',
-  # wwns         => ['20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D3',
-  #   '20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D4'],
+  iqn          => 'iqn.1993-08.org.debian:01:unity-puppet-host',
+  wwns         => ['20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D3',
+    '20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D4'],
   ensure       => present,
-  # luns => [Unity_lun['puppet_lun']],
 }

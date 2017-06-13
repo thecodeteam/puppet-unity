@@ -21,11 +21,11 @@ unity_pool { 'puppet_pool':
 
 
 unity_io_limit_policy { 'puppet_policy':
-  unity_system => Unity_system['FNM00150600267'],
-  policy_type  => 1,
-  description  => 'Created by puppet',
-  max_iops     => 1000,
-  max_kbps     => 20480,
+  unity_system     => Unity_system['FNM00150600267'],
+  policy_type      => 2,
+  description      => 'Created by puppet',
+  max_iops_density => 100,
+  max_kbps_density => 1024,
 }
 
 unity_host { 'my_host':

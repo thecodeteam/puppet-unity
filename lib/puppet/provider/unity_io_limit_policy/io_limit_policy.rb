@@ -108,8 +108,7 @@ Puppet::Type.type(:unity_io_limit_policy).provide(:io_limit_policy_provider) do
     current_property = {}
     current_property[:name] = policy.name
     current_property[:description] = policy.description
-    # TODO why cannot get the type
-    # current_property[:policy_type] = policy.type
+    current_property[:policy_type] = policy.type.value[0]
     unless policy.io_limit_rule_settings.nil?
       current_property[:max_iops] = policy.io_limit_rule_settings[0].max_iops
       current_property[:max_kbps]= policy.io_limit_rule_settings[0].max_kbps

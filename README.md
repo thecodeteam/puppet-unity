@@ -18,10 +18,10 @@
 
 ## Overview
 
-The `dellemc-unity` module manages DellEMC Unity storage resources.
+The `puppet-unity` module manages DellEMC Unity storage resources.
 
-The Unity storage system by DellEMC  delivers the ultimate in simplicity and value, enabling your organization to speed
-deployment, streamline management and seamlessly tier storage to the cloud. The `dellemc-unity` module allows you to
+The Unity storage system by DellEMC delivers the ultimate in simplicity and value, enabling your organization to speed
+deployment, streamline management and seamlessly tier storage to the cloud. The `puppet-unity` module allows you to
 configure and deploy the Unity via Puppet code.
 
 
@@ -32,12 +32,12 @@ configure and deploy the Unity via Puppet code.
  * Puppet 4.7 or greater
  * Ruby 2.0 or greater
  * rubypython 0.6.3 or greater (The bridge between Ruby and Python)
- * Storops, 0.4.13 or greater (Python storage management library for VNX and Unity.) 
+ * Storops, 0.4.15 or greater (Python storage management library for VNX and Unity.) 
 
 
 - [rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
 Python interpreters. It enables the interaction with Python based [storops](https://github.com/emc-openstack/storops)
-library, dramatically eases the effort to extend the `dellemc-unity` module.
+library, dramatically eases the effort to extend the `puppet-unity` module.
 
 - [storops](https://github.com/emc-openstack/storops) is a Python storage management library for
 VNX and Unity. It needs to be manually installed in Puppet agent/master.
@@ -47,7 +47,7 @@ pip install storops
 ```
 
 ### Installation
-Before proceeding, Ensure you have installed the reqiured `Ruby` and `Puppet`.
+Before proceeding, Ensure you have installed the required `Ruby` and `Puppet`.
 1. Install `rubypython` via gem
 ```bash
 gem install rubypython
@@ -111,6 +111,51 @@ unity_iscsi_portal { '10.244.213.245':
 }
 ```
 
+* Create a Host
+
+```puppet
+unity_host { 'my_host':
+  unity_system => Unity_system['FNM00150600267'],
+  description  => 'Created by puppet',
+  ip           => '192.168.1.139',
+  os           => 'Ubuntu16',
+  host_type    => 1,
+  iqn          => 'iqn.1993-08.org.debian:01:unity-puppet-host',
+  wwns         => ['20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D3',
+     '20:00:00:90:FA:53:4C:D1:10:00:00:90:FA:53:4C:D4'],
+  ensure       => present,
+}
+```
+
+* Create a io limit policy
+
+```puppet
+unity_io_limit_policy { 'puppet_policy':
+  unity_system => Unity_system['FNM00150600267'],
+  policy_type => 1,
+  description => 'Created by puppet 12',
+  max_iops => 1000,
+  max_kbps => 20480,
+}
+```
+
+* Create a LUN
+
+```puppet
+unity_lun { 'puppet_lun':
+  unity_system    => Unity_system['FNM00150600267'],
+  pool            => Unity_pool['puppet_pool'],
+  size            => 15,
+  thin            => true,
+  compression     => false,
+  sp              => 0,
+  description     => "Created by puppet_unity.",
+  io_limit_policy => Unity_io_limit_policy['puppet_policy'],
+  hosts           => [Unity_host['my_host']],
+  ensure          => present,
+}
+```
+
 
 ## Reference
 
@@ -120,7 +165,9 @@ unity_iscsi_portal { '10.244.213.245':
  * `unity_license`: Upload a license to a defined Unity system.
  * `unity_pool`: Create, destroy a storage pool.
  * `unity_iscsi_portal`: Create, update, or destroy a iSCSI portal. Applicable for both IPv4 and IPv6.
-
+ * `unity_host`: Create, update, or destroy a Unity host
+ * `unity_io_limit_policy`: Create, update, or destroy a Unity IO limit policy
+ * `unity_lun`: Create, update, or destroy a Unity LUN
 
 ### Parameters
 
@@ -221,6 +268,7 @@ unity_pool { 'puppet_pool':
 
 
 Valid values are:
+
 - `0`: None
 - `1`: RAID5
 - `2`: RAID0
@@ -349,6 +397,172 @@ The gateway for the network. the gateway must be reachable during creation.
 Optional
 
 IPv6 prefix length for the interface, if it uses an IPv6 address.
+
+#### Type: `unity_host`
+
+##### `name`
+Optional.
+
+If not specified when declaring a resource,
+its value will default to the `title` of the resource.
+
+##### `host_type`
+Optional.
+
+Valid values are:
+
+| value | Description                                                                                                  |
+|-------|--------------------------------------------------------------------------------------------------------------|
+| `0`   | Host configuration is unknown.                                                                               |
+| `1`   | A manually defined individual host system.                                                                   |
+| `2`   | All the hosts in a subnet.                                                                                   |
+| `3`   | A netgroup, used for NFS access. Netgroups are defined by NIS, and only available when NIS is active.        |
+| `4`   | A RecoverPoint appliance host.                                                                               |
+| `5`   | An auto-managed host - the system or an external agent identifies and updates the information for this host. |
+| `255` | Host defined for Block Migration from VNX Platform system.                                                   |
+
+Default to `1`
+
+##### `description`
+Optional.
+
+Description for the host.
+
+##### `os`
+Optional.
+
+Operating system running on the host.
+
+##### `ip`
+Required.
+
+IP address for the host.
+
+##### `iqn`
+Optional.
+
+Initiator's IQN for the host.
+
+##### `wwns`
+
+Optional.
+
+WWNs for the host.
+
+
+#### Type: `unity_io_limit_policy`
+
+##### `name`
+Optional.
+
+If not specified when declaring a resource,
+its value will default to the `title` of the resource.
+
+##### `policy_type`
+Optional.
+
+Indicates whether the I/O limit policy is absolute or density-based.
+
+Valid values are:
+
+| value | Description         |
+|-------|---------------------|
+| `1`   | Absolute Value      |
+| `2`   | Density-based Value |
+
+
+Default to `1`.
+
+##### `description`
+Optional.
+
+I/O limit rule description.
+
+##### `max_iops`
+Optional.
+
+Read/write IOPS limit.
+
+##### `max_kbps`
+Optional.
+
+Read/write KB/s limit.
+
+##### `max_iops_density`
+Optional.
+
+Read/write density-based IOPS limit.
+##### `max_kbps_density`
+
+Optional.
+Read/write density-based KB/s limit.
+
+
+#### Type: `unity_lun`
+
+##### `name`
+Optional.
+
+If not specified when declaring a resource,
+its value will default to the `title` of the resource.
+
+##### `description`
+Optional.
+
+LUN description.
+
+##### `thin`
+Optional.
+
+Enable/disable thin provisioning.
+
+Valid values are:
+
+- `true`: Enable thin.
+- `false`: Disable thin.
+
+Default to `true`.
+
+##### `size`
+Required.
+
+Specify LUN size in gagabyte.
+
+
+##### `pool`
+Required.
+
+Set pool of the LUN.
+
+##### `compression`
+Optional.
+
+Enable/disable LUN compression, only applicable for all-flash pool.
+
+
+##### `sp`
+Optional.
+
+Storage Processor (SP) that owns the LUN.
+
+Valid values are:
+
+| value | Description |
+|-------|-------------|
+| `0`   | SPA         |
+| `1`   | SPB         |
+
+
+##### `io_limit_policy`
+Optional.
+
+IO limit settings for the LUN.
+
+##### `hosts`
+Optional.
+
+Hosts which contain this LUN.
+
 
 ## Limitations
 

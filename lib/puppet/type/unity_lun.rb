@@ -36,7 +36,7 @@ Puppet::Type.newtype(:unity_lun) do
   end
 
   newproperty(:size) do
-    desc 'set LUN size.'
+    desc 'Specify LUN size.'
     validate do |value|
       raise(Puppet.Error, 'The LUN size can not be empty.') if value == nil
       unless value.is_a? Integer
@@ -59,7 +59,7 @@ Puppet::Type.newtype(:unity_lun) do
   end
 
   newproperty(:io_limit_policy) do
-    desc 'IO limit settings for the LUN, as defined by the ioLimitParameters.'
+    desc 'IO limit settings for the LUN.'
   end
 
   newproperty(:hosts, :array_matching => :all) do
