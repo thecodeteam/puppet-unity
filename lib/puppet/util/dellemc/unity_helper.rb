@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubypython'
 
+
 Puppet.info('Initializing RubyPython for loading python[storops].')
 RubyPython.start
 

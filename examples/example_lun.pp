@@ -56,12 +56,12 @@ unity_host { 'my_host2':
 unity_lun { 'puppet_lun':
   unity_system    => Unity_system['FNM00150600267'],
   pool            => Unity_pool['puppet_pool'],
-  size            => 20,
+  size            => 15,
   thin            => true,
   compression     => false,
   sp              => 0,
   description     => "Created by puppet_unity.",
   io_limit_policy => Unity_io_limit_policy['puppet_policy'],
-  hosts           => [Unity_host['my_host'], Unity_host['my_host2']],
+  hosts           => [Unity_host['my_host']],
   ensure          => present,
 }

@@ -15,6 +15,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 require 'puppet/util/dellemc/unity_helper'
+require 'set'
 
 Puppet::Type.type(:unity_lun).provide(:lun_provider) do
   @doc = 'Manage Unity LUN.'
@@ -89,23 +90,20 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
         unless @resource[key].nil?
           # clear the hosts for the LUN
           new_names = []
-          Puppet.info "key: #{@resource[key]}"
-
           @resource[key].each do |host_res|
-            Puppet.info "Resource #{host_res}"
             new_names << resource.catalog.resource(host_res.to_s)[:name]
           end
         end
         new_names = new_names.to_set
 
-        curr_names = value.to_set
+        curr_names = value.to_a.to_set
         if curr_names == new_names
-          Puppet.debug "No change for the hosts of LUN #{lun.name}."
+          Puppet.debug "No change regarding the hosts of LUN #{lun.name}."
         else
           Puppet.info "Setting new hosts #{new_names.to_a} for LUN #{lun.name}."
-          lun.update_host!(host_names: new_names.to_a)
+          lun.update_hosts!(host_names: new_names.to_a)
         end
-
+        next
       end
 
       if @resource[key].nil?
@@ -206,21 +204,15 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
     policy.remove_from_storage(lun)
   end
 
-  # Manage host and lun relationship
-  def update_hosts(lun, host_names)
-    Puppet.info "Updating hosts for lun #{lun.name}."
-    lun.update_hosts(host_names)
-  end
-
   def get_current_hosts(lun)
     unity = get_unity_system(@resource[:unity_system])
     host_names = []
     unless lun.host_access == nil
       host_ids = lun.host_access.get_host_id
 
-      host_ids.each do |host_id|
+      host_ids.to_enum.each do |host_id|
         host = host_get_by_id unity, host_id
-        host_names << host.name
+        host_names << host.name.to_s
       end
     end
     host_names

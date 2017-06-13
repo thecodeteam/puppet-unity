@@ -62,7 +62,7 @@ Puppet::Type.newtype(:unity_lun) do
     desc 'IO limit settings for the LUN, as defined by the ioLimitParameters.'
   end
 
-  newproperty(:hosts, :arrry_matching => :all) do
+  newproperty(:hosts, :array_matching => :all) do
     desc 'Hosts which contain this LUN.'
   end
 
