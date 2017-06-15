@@ -260,41 +260,46 @@ unity_pool { 'puppet_pool':
 }
 ...
 ```
+Parameters in `raid_groups`:
 
-`disk_group`: the id of disk group of the Unity system.
+ * `disk_group`: the id of disk group of the Unity system.
 
 
-`raid_type`: the raid type of pool.
+ * `raid_type`: the raid type of pool.
 
 
 Valid values are:
 
-- `0`: None
-- `1`: RAID5
-- `2`: RAID0
-- `3`: RAID1
-- `4`: RAID3
-- `7`: RAID10
-- `10`: RAID6
-- `48879`: Automatic
+| Value   | Description |
+|---------|-------------|
+| `0`     | None        |
+| `1`     | RAID5       |
+| `2`     | RAID0       |
+| `3`     | RAID1       |
+| `4`     | RAID3       |
+| `7`     | RAID10      |
+| `10`    | RAID6       |
+| `48879` | Automatic   |
 
-`stripe_width`: RAID group stripe widths, including parity or mirror disks.
+ * `stripe_width`: RAID group stripe widths, including parity or mirror disks.
 
-- `0` : BestFit value is used in automatic selection of stripe configuration.
-- `2`: A 2 disk group, usable in RAID10 1+1 configuration.
-- `4`: A 4 disk group, usable in RAID10 2+2 configuration.
-- `5`: A 5 disk group, usable in RAID5 4+1 configuration.
-- `6`: A 6 disk group, usable in RAID6 4+2 and RAID10 3+3 configurations.
-- `8`: A 8 disk group, usable in RAID6 6+2 and RAID10 4+4 configurations.
-- `9`: A 9 disk group, usable in RAID5 8+1 configuration.
-- `10`: A 10 disk group, usable in RAID6 8+2 and RAID10 5+5 configurations.
-- `12`: A 12 disk group, usable in RAID6 10+2 and RAID10 6+6 configurations.
-- `13`: A 13 disk group, usable in RAID5 12+1 configuration.
-- `14`: A 14 disk group, usable in RAID6 12+2 configuration.
-- `15`: raid strip width including parity disks, can be used in RAID6 14+2 configuration.
+| Value | Description                                                                       |
+|-------|-----------------------------------------------------------------------------------|
+| `0`   | BestFit value is used in automatic selection of stripe configuration.             |
+| `2`   | A 2 disk group, usable in RAID10 1+1 configuration.                               |
+| `4`   | A 4 disk group, usable in RAID10 2+2 configuration.                               |
+| `5`   | A 5 disk group, usable in RAID5 4+1 configuration.                                |
+| `6`   | A 6 disk group, usable in RAID6 4+2 and RAID10 3+3 configurations.                |
+| `8`   | A 8 disk group, usable in RAID6 6+2 and RAID10 4+4 configurations.                |
+| `9`   | A 9 disk group, usable in RAID5 8+1 configuration.                                |
+| `10`  | A 10 disk group, usable in RAID6 8+2 and RAID10 5+5 configurations.               |
+| `12`  | A 12 disk group, usable in RAID6 10+2 and RAID10 6+6 configurations.              |
+| `13`  | A 13 disk group, usable in RAID5 12+1 configuration.                              |
+| `14`  | A 14 disk group, usable in RAID6 12+2 configuration.                              |
+| `15`  | raid strip width including parity disks, can be used in RAID6 14+2 configuration. |
 
 
-`disk_num`: Number of disks.
+ * `disk_num`: Number of disks.
  
 ##### `alert_threshold`
 

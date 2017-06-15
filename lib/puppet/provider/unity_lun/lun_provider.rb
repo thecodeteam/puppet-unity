@@ -113,7 +113,8 @@ Puppet::Type.type(:unity_lun).provide(:lun_provider) do
         if key == :compression
           diff[:is_compression] = @resource[key]
         elsif key == :size
-          # TODO need to resolve the long bug in rubypython
+          # Convert size in "GB" to "byte"
+          # BigNum is too big to be converted to python long see: https://github.com/halostatue/rubypython/pull/5
           diff[:size] = @resource[key] * 1024 * 1024 * 1024
         else
           diff[key] = @resource[key]
