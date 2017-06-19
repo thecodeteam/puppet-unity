@@ -1,5 +1,5 @@
 {
-  "name": "puppet-unity",
+  "name": "dellemc-unity",
   "version": "0.1.0",
   "author": "Peter Wang",
   "summary": "Configure and manage the DellEMC Unity storage systems.",

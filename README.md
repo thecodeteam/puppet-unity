@@ -18,10 +18,10 @@
 
 ## Overview
 
-The `puppet-unity` module manages DellEMC Unity storage resources.
+The `dellemc-unity` module manages DellEMC Unity storage resources.
 
 The Unity storage system by DellEMC delivers the ultimate in simplicity and value, enabling your organization to speed
-deployment, streamline management and seamlessly tier storage to the cloud. The `puppet-unity` module allows you to
+deployment, streamline management and seamlessly tier storage to the cloud. The `dellemc-unity` module allows you to
 configure and deploy the Unity via Puppet code.
 
 
@@ -29,15 +29,16 @@ configure and deploy the Unity via Puppet code.
 
 ### Requirements
 
- * Puppet 4.7 or greater
- * Ruby 2.0 or greater
- * rubypython 0.6.3 or greater (The bridge between Ruby and Python)
+ * Puppet `4.7` or greater
+ * Ruby `2.0` or greater
+ * rubypython `0.6.3` or greater (The bridge between Ruby and Python)
+ * Python `2.7`.
  * Storops, 0.4.15 or greater (Python storage management library for Unity and VNX.)
 
 
 - [rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
 Python interpreters. It enables the interaction with Python based [storops](https://github.com/emc-openstack/storops)
-library, dramatically eases the effort to extend the `puppet-unity` module.
+library, dramatically eases the effort to extend the `dellemc-unity` module.
 
 - [storops](https://github.com/emc-openstack/storops) is a Python storage management library for
 VNX and Unity. It needs to be manually installed in Puppet agent/master.
@@ -48,15 +49,31 @@ pip install storops
 
 ### Installation
 Before proceeding, Ensure you have installed the required `Ruby` and `Puppet`.
+
 1. Install `rubypython` via gem
+
 ```bash
 gem install rubypython
 ```
 
 2. Install `storops` from [pypi](https://pypi.python.org/pypi)
+
 ```bash
 pip install storops
 ```
+
+3. Install `dellemc-unity` puppet module.
+
+```bash
+puppet module install dellemc-unity
+```
+or install from a local source tarball.
+
+```bash
+puppet module install ".\dellemc-unity-x.y.z.tar.gz"
+```
+
+
 ## Usage
 
 * Define a managed Unity system
@@ -71,6 +88,7 @@ unity_system { 'FNM00150600267':
 ```
 
 The defined system `Unity_system['FNM00150600267']` then can be passed to any Unity resources.
+
 
 * Upload a license
 
@@ -162,6 +180,12 @@ unity_lun { 'puppet_lun':
 }
 ```
 
+* Define multiple Unity system in manifest file
+
+Administrator can define multiple systems and manage the resources on systems via a single manifest file.
+
+Please refer to the example file here: [example_multiple_systems](examples/example_multiple_systems.pp)
+
 
 ## Reference
 
@@ -171,11 +195,11 @@ unity_lun { 'puppet_lun':
  * `unity_license`: Upload a license to a defined Unity system.
  * `unity_pool`: Create, destroy a storage pool.
  * `unity_iscsi_portal`: Create, update, or destroy a iSCSI portal. Applicable for both IPv4 and IPv6.
- * `unity_host`: Create, update, or destroy a Unity host
- * `unity_io_limit_policy`: Create, update, or destroy a Unity IO limit policy
- * `unity_lun`: Create, update, or destroy a Unity LUN
+ * `unity_host`: Create, update, or destroy a Unity host.
+ * `unity_io_limit_policy`: Create, update, or destroy a Unity IO limit policy.
+ * `unity_lun`: Create, update, or destroy a Unity LUN.
 
-You can reference the examples for each resource type under the source code folder [examples](puppet-exampels)
+You can reference the examples for each resource type under the source code folder: [examples](examples)
 
 ### Parameters
 
