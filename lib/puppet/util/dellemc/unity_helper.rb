@@ -30,13 +30,3 @@ def get_raid_group_parameters(raid_groups)
   end
   parameters
 end
-
-def none_to_nil(value)
-  if value == "None"
-    return nil
-  end
-  if value.respond_to?(:to_s)
-    return value.to_s
-  end
-  value
-end

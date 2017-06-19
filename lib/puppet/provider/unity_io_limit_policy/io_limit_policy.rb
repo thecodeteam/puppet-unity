@@ -80,7 +80,11 @@ Puppet::Type.type(:unity_io_limit_policy).provide(:io_limit_policy_provider) do
       policy_type: @resource[:policy_type],
       description: @resource[:description],
       max_iops_density: @resource[:max_iops_density],
-      max_kbps_density: @resource[:max_kbps_density]
+      max_kbps_density: @resource[:max_kbps_density],
+      burst_rate: @resource[:burst_rate],
+      burst_time: @resource[:burst_time],
+      burst_frequency: @resource[:burst_frequency],
+
     )
 
     Puppet.info "Policy #{policy.get_id} created."
@@ -114,11 +118,17 @@ Puppet::Type.type(:unity_io_limit_policy).provide(:io_limit_policy_provider) do
       current_property[:max_kbps]= policy.io_limit_rule_settings[0].max_kbps
       current_property[:max_iops_density]= policy.io_limit_rule_settings[0].max_iops_density
       current_property[:max_kbps_density]= policy.io_limit_rule_settings[0].max_kbps_density
+      current_property[:burst_rate] = policy.io_limit_rule_settings[0].burst_rate
+      current_property[:burst_time] =policy.io_limit_rule_settings[0].burst_time
+      current_property[:burst_frequency] = policy.io_limit_rule_settings[0].burst_frequency
     else
       current_property[:max_iops] = nil
       current_property[:max_kbps] = nil
       current_property[:max_iops_density] = nil
       current_property[:max_kbps_density] = nil
+      current_property[:burst_rate] = nil
+      current_property[:burst_time] = nil
+      current_property[:burst_frequency] =nil
     end
     current_property
   end
@@ -134,4 +144,5 @@ Puppet::Type.type(:unity_io_limit_policy).provide(:io_limit_policy_provider) do
 
     policy.delete
   end
+
 end

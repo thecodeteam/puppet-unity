@@ -94,7 +94,6 @@ Puppet::Type.newtype(:unity_pool) do
   end
   newparam(:pool_type) do
     desc 'Create traditional/dynamic pool'
-    defaultto 1
 
   end
 

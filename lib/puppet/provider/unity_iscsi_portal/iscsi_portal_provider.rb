@@ -62,27 +62,28 @@ Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
 
     @property_hash = portal_property
     # We need to recreate the portal if its underlying ethernet_port get changed
-    if @property_hash[:ethernet_port] != @resource[:ethernet_port]
+    unless @property_hash[:ethernet_port] == @resource[:ethernet_port]
+      Puppet.info 'Ethernet port is changed, need to destroy and create the interface.'
       portal_destroy
       portal_create
       return
-    else
-      diff = {}
-      @property_hash.each do |key, value|
-        if key == :ensure
+    end
+    diff = {}
+    @property_hash.each do |key, value|
+      if key == :ensure
+        next
+      end
+      if key == :ethernet_port
+        next
+      end
+      unless value == @resource[key]
+        if @resource[key].nil?
           next
         end
-        if key == :ethernet_port
-          next
-        end
-        unless value == @resource[key]
-          if @resource[key].nil?
-            next
-          end
-          diff[key] = @resource[key]
-        end
+        diff[key] = @resource[key]
       end
     end
+
 
     if diff.empty?
       Puppet.info "NO any change on portal #{@resource[:ip]}"
@@ -155,12 +156,12 @@ Puppet::Type.type(:unity_iscsi_portal).provide(:iscsi_portal_provider) do
 
   def convert_portal(portal)
     current_property = {}
-    current_property[:ip] = none_to_nil(portal.ip_address)
-    current_property[:netmask] = none_to_nil(portal.netmask)
-    current_property[:v6_prefix_len] = none_to_nil(portal.v6_prefix_length)
-    current_property[:gateway] = none_to_nil(portal.gateway)
-    current_property[:vlan] = none_to_nil(portal.vlan_id)
-    current_property[:ethernet_port] = none_to_nil(portal.ethernet_port.get_id)
+    current_property[:ip] = portal.ip_address
+    current_property[:netmask] = portal.netmask
+    current_property[:v6_prefix_len] = portal.v6_prefix_length
+    current_property[:gateway] = portal.gateway
+    current_property[:vlan] = portal.vlan_id
+    current_property[:ethernet_port] = portal.ethernet_port.get_id
     current_property[:ensure] = :present
     current_property
   end

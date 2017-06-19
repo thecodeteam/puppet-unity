@@ -1,4 +1,4 @@
-# unity
+# Puppet module for Unity system
 
 #### Table of Contents
 
@@ -32,7 +32,7 @@ configure and deploy the Unity via Puppet code.
  * Puppet 4.7 or greater
  * Ruby 2.0 or greater
  * rubypython 0.6.3 or greater (The bridge between Ruby and Python)
- * Storops, 0.4.15 or greater (Python storage management library for VNX and Unity.) 
+ * Storops, 0.4.15 or greater (Python storage management library for Unity and VNX.)
 
 
 - [rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
@@ -130,14 +130,20 @@ unity_host { 'my_host':
 * Create a io limit policy
 
 ```puppet
+# Create a Unity io limit policy (absolute limit)
 unity_io_limit_policy { 'puppet_policy':
   unity_system => Unity_system['FNM00150600267'],
   policy_type => 1,
   description => 'Created by puppet 12',
   max_iops => 1000,
   max_kbps => 20480,
+  burst_rate => 50,
+  burst_time => 10,
+  burst_frequency => 2,
 }
 ```
+
+The meaning for above burst settings is: **50% for 10 minute(s) resetting every 2 hour(s)**.
 
 * Create a LUN
 
@@ -168,6 +174,8 @@ unity_lun { 'puppet_lun':
  * `unity_host`: Create, update, or destroy a Unity host
  * `unity_io_limit_policy`: Create, update, or destroy a Unity IO limit policy
  * `unity_lun`: Create, update, or destroy a Unity LUN
+
+You can reference the examples for each resource type under the source code folder [examples](puppet-exampels)
 
 ### Parameters
 
@@ -497,12 +505,28 @@ Read/write KB/s limit.
 Optional.
 
 Read/write density-based IOPS limit.
+
 ##### `max_kbps_density`
 
 Optional.
 Read/write density-based KB/s limit.
 
+##### `burst_rate`
+optional.
+The percentage of read/write IOPS and/or KBPS over the limits a storage object is allowed to process during a spike in demand.
 
+##### `burst_time`
+optional.
+How long a storage object is allowed to process burst traffic.
+
+burst_time must be `1` to `60`.
+
+##### `burst_frequency`
+optional.
+
+How often a storage object is allowed to process burst traffic for the duration of burst time.
+
+burst_frequency must be `1` to `24`.
 #### Type: `unity_lun`
 
 ##### `name`
