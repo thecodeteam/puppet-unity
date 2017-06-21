@@ -29,9 +29,9 @@ configure and deploy the Unity via Puppet code.
 
 ### Requirements
 
- * Puppet `4.7` or greater
- * Ruby `2.0` or greater
- * rubypython `0.6.3` or greater (The bridge between Ruby and Python)
+ * Puppet `3.8` or greater
+ * Ruby `1.9` or greater
+ * rubypython `0.6.4` or greater (The bridge between Ruby and Python)
  * Python `2.7`.
  * Storops, 0.4.15 or greater (Python storage management library for Unity and VNX.)
 
@@ -52,6 +52,10 @@ Before proceeding, Ensure you have installed the required `Ruby` and `Puppet`.
 
 1. Install `rubypython` via gem
 
+> On Ubuntu/Debian, make sure the `libffi-dev` is installed, since `ffi` (one of `rubypython`'s dependencies) is a native
+extension. To install it, use `sudo apt-get install libffi-dev`
+
+And then install `rubypython`.
 ```bash
 gem install rubypython
 ```
