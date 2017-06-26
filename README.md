@@ -24,6 +24,10 @@ The Unity storage system by DellEMC delivers the ultimate in simplicity and valu
 deployment, streamline management and seamlessly tier storage to the cloud. The `dellemc-unity` module allows you to
 configure and deploy the Unity via Puppet code.
 
+## License
+
+[Apache License version 2](LICENSE)
+
 
 ## Setup
 
@@ -627,7 +631,7 @@ TODO
 
 ## Development
 
-Simply fork the repo [puppet-unity](https://github.com/emc-openstack/puppet-unity) and send PR for your code change(also provide testing result of your change), remember to give a title and description of your PR. 
+Simply fork the repo [puppet-unity](https://github.com/emc-openstack/puppet-unity) and send PR for your code change(also provide testing result of your change), remember to give a title and description of your PR.
 
 ## Contributors
 
