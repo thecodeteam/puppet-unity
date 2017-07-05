@@ -59,7 +59,12 @@ Before proceeding, Ensure you have installed the required `Ruby` and `Puppet`.
 > On Ubuntu/Debian, make sure the `libffi-dev` is installed, since `ffi` (one of `rubypython`'s dependencies) is a native
 extension. To install it, use `sudo apt-get install libffi-dev`
 
-And then install `rubypython`.
+> For some puppet distros, a build-in `ruby` interpreter and `gem` are shipped with puppet together, so make sure the right
+> `gem` is used to install ruby related dependencies. In this case, you can use following command to install `rubypython`:
+>  ```bash
+>  /opt/puppetlabs/puppet/bin/gem install rubypython
+>  ```
+
 ```bash
 gem install rubypython
 ```
