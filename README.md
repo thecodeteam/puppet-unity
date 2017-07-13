@@ -93,7 +93,7 @@ puppet module install ".\dellemc-unity-x.y.z.tar.gz"
 
 ```puppet
 unity_system { 'FNM00150600267':
-  ip       => '10.245.101.35',
+  ip       => '10.245.101.39',
   user     => 'admin',
   password => 'Password123!',
   ensure => present,
@@ -245,7 +245,7 @@ The password of Unity.
 ##### `license_file`
 Optional.
 
-THe absolute path of the license file.
+The absolute path of the license file.
 
 If not specified when declaring a resource,
 its value will default to the `title` of the resource.
@@ -432,7 +432,8 @@ It can be a address `255.255.255.0` or a length `24`.
 
 ##### `vlan`
 
-Required 
+Optional
+
 The VLAN identifier for the iSCSI portal.
 
 ##### `gateway`
@@ -592,7 +593,7 @@ Default to `true`.
 ##### `size`
 Required.
 
-Specify LUN size in gagabyte.
+Specify LUN size in gigabyte.
 
 
 ##### `pool`

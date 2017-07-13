@@ -50,3 +50,6 @@ build-iPhoneSimulator/
 .rvmrc
 # ide related
 .idea
+
+# unity license file
+*.lic
