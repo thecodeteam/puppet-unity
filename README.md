@@ -650,3 +650,5 @@ peter.wang13 at emc.com
 ## Release Notes
 
 0.1.0 - Initial release.
+0.1.1 - Add license differential uploading.
+      - Pool expansion if new raid groups are added.

@@ -24,6 +24,7 @@ Puppet::Type.type(:unity_license).provide(:license_provider) do
 
     unity = get_unity_system(@resource[:unity_system])
     unity.upload_license(@resource[:license_file].to_s)
+
   end
 
   def destroy
@@ -31,8 +32,48 @@ Puppet::Type.type(:unity_license).provide(:license_provider) do
   end
 
   def exists?
-    Puppet.info "License #{@resource[:license_file]} cannot be queried."
+    Puppet.info "Checking existence of License #{@resource[:license_file]}."
     # Always force license uploading.
-    false
+    is_license_same? @resource[:license_file].to_s
   end
+
+
+  def get_file_info(path)
+    feature_names = []
+    File.open(path, 'r') do |license|
+      while (line = license.gets)
+        if line.include? 'INCREMENT'
+          f_name = line.split[1]
+          feature_names << f_name
+        end
+      end
+
+      return feature_names
+    end
+  end
+
+  def get_array_licenses
+    license_names = []
+    unity = get_unity_system(@resource[:unity_system])
+    licenses = unity.get_license
+    licenses.to_enum.each do |license|
+      license_names << license.name.to_s
+    end
+
+    license_names
+
+  end
+
+  def is_license_same?(path)
+    curr = get_array_licenses
+    file_lic = get_file_info path
+    if curr.to_set == file_lic.to_set
+      Puppet.debug "No change in #{path}. Skipping license uploading."
+      return true
+    else
+      Puppet.info "New changes found in #{path}, uploading changes: #{(file_lic.to_set - curr.to_set).to_a}."
+      return false
+    end
+  end
+
 end

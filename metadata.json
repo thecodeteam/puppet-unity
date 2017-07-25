@@ -1,6 +1,6 @@
 {
   "name": "dellemc-unity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Peter Wang",
   "summary": "Configure and manage the DellEMC Unity storage systems.",
   "license": "Apache-2.0",
