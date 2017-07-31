@@ -6,6 +6,7 @@ Puppet.info('Initializing RubyPython for loading python[storops].')
 RubyPython.start
 
 $storops = RubyPython.import('storops')
+
 $storops.enable_log
 
 $unity_info = {}

@@ -37,7 +37,7 @@ configure and deploy the Unity via Puppet code.
  * Ruby `1.9` or greater
  * rubypython `0.6.4` or greater (The bridge between Ruby and Python)
  * Python `2.7`.
- * Storops, 0.4.15 or greater (Python storage management library for Unity and VNX.)
+ * Storops, 0.5.1 or greater (Python storage management library for Unity and VNX.)
 
 
 - [rubypython](https://rubygems.org/gems/rubypython) is a bridge between the Ruby and
@@ -206,7 +206,7 @@ Please refer to the example file here: [example_multiple_systems](examples/examp
 
  * `unity_system`: Define a Unity system.
  * `unity_license`: Upload a license to a defined Unity system.
- * `unity_pool`: Create, destroy a storage pool.
+ * `unity_pool`: Create, modify, expand or destroy a storage pool.
  * `unity_iscsi_portal`: Create, update, or destroy a iSCSI portal. Applicable for both IPv4 and IPv6.
  * `unity_host`: Create, update, or destroy a Unity host.
  * `unity_io_limit_policy`: Create, update, or destroy a Unity IO limit policy.
@@ -346,6 +346,8 @@ Valid values are:
 
  * `disk_num`: Number of disks.
  
+For pool expansion, user can either increase the `disk_num` or add new raid group in `raid_groups`.
+ 
 ##### `alert_threshold`
 
 
@@ -404,6 +406,13 @@ Enable/disable scheduled data relocations for this pool.
 Optional
 
 Create traditional/dynamic pool
+
+Valid values are:
+
+| Value   | Description       |
+|---------|-------------------|
+| `1`     | traditional pool  |
+| `2`     | dynamic pool      |
 
 
 #### Type: `unity_iscsi_portal`
@@ -649,6 +658,8 @@ peter.wang13 at emc.com
 
 ## Release Notes
 
-0.1.0 - Initial release.
-0.1.1 - Add license differential uploading.
-      - Pool expansion if new raid groups are added.
+- 0.1.0
+    * Initial release.
+- 0.1.1
+    * Add license differential uploading.
+    * Pool expansion if new raid groups are added.
