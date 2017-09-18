@@ -23,7 +23,7 @@ Puppet::Type.newtype(:unity_system) do
   def self.instances
     # this code is here to support purging and the query-all functionality of the
     # 'puppet resource' command, such as:
-    # 'puppet resource unity_system  test ip=10.245.101.35 user=admin password=Password123!'
+    # 'puppet resource unity_system  test ip=192.168.1.50 user=admin password=password'
     if self.respond_to?(:ip, :user, :password)
       # figure out what to do about the separator
       Puppet.info("IP :#{ip}, USER: #{user}, PASSWORD: #{password}")

@@ -1,12 +1,12 @@
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.35',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
 }
 
 #
 # unity_host { 'my_host':
-#   unity_system => Unity_system['FNM00150600267'],
+#   unity_system => Unity_system['FNM12345678901'],
 #   ip => '192.168.1.130',
 #   os_type => 'Ubuntu',
 #   host_type => 1,
@@ -15,7 +15,7 @@ unity_system { 'FNM00150600267':
 # }
 
 unity_host { 'my_host':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   description  => 'Created by puppet',
   ip           => '192.168.1.139',
   os           => 'Ubuntu16',

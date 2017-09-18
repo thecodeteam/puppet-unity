@@ -92,22 +92,22 @@ puppet module install ".\dellemc-unity-x.y.z.tar.gz"
 * Define a managed Unity system
 
 ```puppet
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.39',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
   ensure => present,
 }
 ```
 
-The defined system `Unity_system['FNM00150600267']` then can be passed to any Unity resources.
+The defined system `Unity_system['FNM12345678901']` then can be passed to any Unity resources.
 
 
 * Upload a license
 
 ```puppet
 unity_license{ '/path/to/the/license.lic':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   ensure => present,
 }
 ```
@@ -117,7 +117,7 @@ Note: the path separator in the `title` must be `/` even using on Windows agent.
 
 ```puppet
 unity_pool { 'puppet_pool':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   description => 'created by puppet module',
   raid_groups => [{
     disk_group => 'dg_15',
@@ -133,7 +133,7 @@ unity_pool { 'puppet_pool':
 
 ```puppet
 unity_iscsi_portal { '10.244.213.245':
-  unity_system  => Unity_system['FNM00150600267'],
+  unity_system  => Unity_system['FNM12345678901'],
   ethernet_port => 'spa_eth3',
   netmask       => '255.255.255.0',
   vlan          => 133,
@@ -146,7 +146,7 @@ unity_iscsi_portal { '10.244.213.245':
 
 ```puppet
 unity_host { 'my_host':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   description  => 'Created by puppet',
   ip           => '192.168.1.139',
   os           => 'Ubuntu16',
@@ -163,7 +163,7 @@ unity_host { 'my_host':
 ```puppet
 # Create a Unity io limit policy (absolute limit)
 unity_io_limit_policy { 'puppet_policy':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   policy_type => 1,
   description => 'Created by puppet 12',
   max_iops => 1000,
@@ -180,7 +180,7 @@ The meaning for above burst settings is: **50% for 10 minute(s) resetting every 
 
 ```puppet
 unity_lun { 'puppet_lun':
-  unity_system    => Unity_system['FNM00150600267'],
+  unity_system    => Unity_system['FNM12345678901'],
   pool            => Unity_pool['puppet_pool'],
   size            => 15,
   thin            => true,
@@ -290,7 +290,7 @@ a list of `Hash` is required for the pool.
 ```puppet
 ...
 unity_pool { 'puppet_pool':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   description  => 'created by puppet module',
   raid_groups  => [{
     disk_group   => 'dg_15',
@@ -642,17 +642,16 @@ Hosts which contain this LUN.
 
 ## Limitations
 
-TODO
 
 ## Development
 
-Simply fork the repo [puppet-unity](https://github.com/emc-openstack/puppet-unity) and send PR for your code change(also provide testing result of your change), remember to give a title and description of your PR.
+Simply fork the repo and send PR for your code change(also provide testing result of your change), remember to give a title and description of your PR.
 
 ## Contributors
 
 peter.wang13 at emc.com
 
-## Contract
+## Contact
 
 peter.wang13 at emc.com
 

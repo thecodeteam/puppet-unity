@@ -1,13 +1,13 @@
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.39',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
 }
 
 
 
 unity_pool { 'puppet_pool':
-  unity_system            => Unity_system['FNM00150600267'],
+  unity_system            => Unity_system['FNM12345678901'],
   description             => 'created by puppet module',
   raid_groups             => [{
     disk_group   => 'dg_15',
@@ -26,7 +26,7 @@ unity_pool { 'puppet_pool':
 # uncomment the following manifest for a pool expansion
 
 # unity_pool { 'puppet_pool':
-#   unity_system            => Unity_system['FNM00150600267'],
+#   unity_system            => Unity_system['FNM12345678901'],
 #   description             => 'created by puppet module',
 #   raid_groups             => [{
 #     disk_group   => 'dg_15',

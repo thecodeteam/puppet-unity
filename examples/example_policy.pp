@@ -1,12 +1,12 @@
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.35',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
 }
 
 # Create a Unity io limit policy (absolute limit)
 unity_io_limit_policy { 'puppet_policy':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   policy_type => 1,
   description => 'Created by puppet 12',
   max_iops => 1000,

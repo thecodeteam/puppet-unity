@@ -1,14 +1,14 @@
 
 # Define a Unity System
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.39',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
 }
 
 # Create a Unity Pool
 unity_pool { 'puppet_pool':
-  unity_system            => Unity_system['FNM00150600267'],
+  unity_system            => Unity_system['FNM12345678901'],
   description             => 'created by puppet module',
   raid_groups             => [{
     disk_group   => 'dg_15',
@@ -24,7 +24,7 @@ unity_pool { 'puppet_pool':
 
 # Create a Unity IO limit policy (density-based)
 unity_io_limit_policy { 'puppet_policy':
-  unity_system     => Unity_system['FNM00150600267'],
+  unity_system     => Unity_system['FNM12345678901'],
   policy_type      => 2,
   description      => 'Created by puppet',
   max_iops_density => 100,
@@ -33,7 +33,7 @@ unity_io_limit_policy { 'puppet_policy':
 
 # Create a Host for lun access
 unity_host { 'my_host':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   description  => 'Created by puppet',
   ip           => '192.168.1.139',
   os           => 'Ubuntu16',
@@ -46,7 +46,7 @@ unity_host { 'my_host':
 
 # Create another Host for lun access
 unity_host { 'my_host2':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   description  => 'Created by puppet2',
   ip           => '192.168.1.140',
   os           => 'Ubuntu14',
@@ -61,7 +61,7 @@ unity_host { 'my_host2':
 # 1. Configure the IO limit policy
 # 2. Assign host access
 unity_lun { 'puppet_lun':
-  unity_system    => Unity_system['FNM00150600267'],
+  unity_system    => Unity_system['FNM12345678901'],
   pool            => Unity_pool['puppet_pool'],
   size            => 30,
   thin            => true,

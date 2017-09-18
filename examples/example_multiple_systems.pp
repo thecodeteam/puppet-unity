@@ -1,8 +1,8 @@
 # Define the first system
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.35',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
   ensure   => present,
 }
 
@@ -10,17 +10,17 @@ unity_system { 'FNM00150600267':
 unity_system { 'APM00150602415':
   ip       => '192.168.1.58',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
   ensure   => present,
 }
 
 # Create a lun in the first system
 unity_pool { 'puppet_pool':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   ensure       => present,
 }
 unity_lun { 'puppet_lun_1':
-  unity_system => Unity_system['FNM00150600267'],
+  unity_system => Unity_system['FNM12345678901'],
   pool         => Unity_pool['puppet_pool'],
   size         => 30,
   thin         => true,

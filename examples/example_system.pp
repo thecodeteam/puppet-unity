@@ -1,6 +1,6 @@
-unity_system { 'FNM00150600267':
-  ip       => '10.245.101.35',
+unity_system { 'FNM12345678901':
+  ip       => '192.168.1.50',
   user     => 'admin',
-  password => 'Password123!',
+  password => 'password',
   ensure   => present,
 }
