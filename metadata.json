@@ -1,12 +1,12 @@
 {
   "name": "dellemc-unity",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Peter Wang",
   "summary": "Configure and manage the DellEMC Unity storage systems.",
   "license": "Apache-2.0",
-  "source": "https://github.com/emc-openstack/puppet-unity",
-  "project_page": "https://github.com/emc-openstack/puppet-unity",
-  "issues_url": "https://github.com/emc-openstack/puppet-unity/issues",
+  "source": "https://github.com/thecodeteam/puppet-unity",
+  "project_page": "https://github.com/thecodeteam/puppet-unity",
+  "issues_url": "https://github.com/thecodeteam/puppet-unity/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
